@@ -20,7 +20,7 @@ app.use(express.urlencoded({ extended: true })) // for parsing application/x-www
 // routers
 const indexRouter = require('./routes/index')
 const blogRouter = require('./routes/blog')
-const commentRouter = require('./routes/comment')
+const commentRouter = require('./routes/comment3')
 
 app.use(indexRouter.router)
 app.use(blogRouter)

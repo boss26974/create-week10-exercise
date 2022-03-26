@@ -4,24 +4,18 @@ const router = express.Router();
 
 // Get comment
 router.post('/:blogId/comments', async function(req, res, next){
-    const conn = await pool.getConnection()
-    await conn.beginTransaction();
-
     try{
         let comment_by_id = req.body.comment_by_id
         if(isNaN(comment_by_id)){comment_by_id = null}
         const [rows, fields] = await pool.query(
             `INSERT INTO comments (comments.blog_id, comments.comment, comments.like, comments.comment_by_id)
             VALUES (?, ?, ?, ?)`,
-            [req.params.blogId, req.body.comment, 0, comment_by_id])
-        conn.commit()
-        res.redirect("/detail/" + req.params.blogId)
+            [req.params.blogId, req.body.comment, req.body.like, comment_by_id])
+        res.send({
+            message: "A new comment is added (ID: " + rows.insertId + ")"
+        })
     }catch(err){
-        conn.rollback()
-        return next(err)
-    }finally {
-        console.log("เพิ่ม comment เรียบร้อยแล้ว")
-        conn.release()
+        console.log(err)
     }
 });
 

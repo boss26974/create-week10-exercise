@@ -44,6 +44,17 @@ CREATE TABLE `comments` (
   UNIQUE KEY `id` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4;
 
+DROP TABLE IF EXISTS `comment_images`;
+CREATE TABLE `comment_images` (
+  `id` bigint unsigned NOT NULL AUTO_INCREMENT,
+  `comment_id` int NOT NULL,
+  `file_path` varchar(200) NOT NULL,
+  `upload_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `update_by_id` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `id` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=22 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 DROP TABLE IF EXISTS `follow`;
 CREATE TABLE `follow` (
   `user_id` int(11) NOT NULL,
