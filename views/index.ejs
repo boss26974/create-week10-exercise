@@ -7,7 +7,6 @@
     <link href="/css/all.css" rel="stylesheet" />
     <link href="/css/bulma.css" rel="stylesheet" />
     <script src="/js/all.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     <title>My Blogs</title>
   </head>
   <body class="has-background-light">
@@ -19,66 +18,54 @@
       </section>
       <section class="section" id="app">
           <div class="content">
-              <form method="GET" action="/">
-                 <div class="columns">
-                   <div class="column is-4 is-offset-3">
-                     <input class="input" type="text" name="search" placeholder="ค้นชื่อบทความ" value="<%= search %>">
-                   </div>
-                   <div class="column is-2">
-                     <input class="button" type="submit" value="Search">
-                   </div>
-                 </div>
-                 </form>
+            <form method="GET" action="/">
+            <div class="columns">
+              <div class="column is-4 is-offset-3">
+                <input class="input" type="text" name="search" placeholder="ค้นชื่อบทความ" value="<%= search %>">
+              </div>
+              <div class="column is-2">
+                <input class="button" type="submit" value="Search">
+              </div>
+            </div>
+            </form>
             <div class="columns is-multiline">
-                <div class="column is-3" v-for="blog in blogDisplay">
+              <% for (let blog of blogs) { %>
+                <div class="column is-3">
                   <div class="card">
                       <div class="card-image pt-5">
                         <figure class="image">
-                          <img :src="blog.file_path" alt="Placeholder image">
+                          <img src="<%= blog.file_path ? blog.file_path : 'https://bulma.io/images/placeholders/640x360.png' %>" alt="Placeholder image">
                         </figure>
                       </div>
                       <div class="card-content">
-                        <div class="title">{{blog.title}}</div>
+                        <div class="title"><%= blog.title %> </div>
                         <div class="content">
-                          {{blog.content}}
+                          <% if (blog.content.length > 200) { %>
+                            <%= blog.content.substring(0, 197) + "..." %>
+                          <% } else { %>
+                            <%= blog.content %>
+                          <% } %>
                         </div>
                         
                       </div>
                       <footer class="card-footer">
-                        <a class="card-footer-item" :href="'/detail/' + blog.id">Read more...</a>
-                        <a class="card-footer-item" :href="'/blogs/addlike/' + blog.id">
-                          <form method="POST" action="" id="">
-                            <span class="icon-text">
-                            <span class="icon">
-                              <i class="far fa-heart"></i>
+                        <a class="card-footer-item" href="<%= `/blogs/${blog.id}/` %>">Read more...</a>
+                        <a class="card-footer-item">
+                          <form method="POST" action="<%= `/blogs/addlike/${blog.id}` %>" id="form<%= blog.id %>">
+                            <span class="icon-text" onclick="document.getElementById('form<%= blog.id %>').submit();">
+                              <span class="icon">
+                                <i class="far fa-heart"></i>
+                              </span>
+                              <span>Like (<%= blog.like %>)</span>
                             </span>
-                            <span>Like ({{blog.like}})</span> <!-- ปรับเพิ่มให่้แสดงจำนวน like ในวงเล็บ -->
-                          </span>
-                        </form>
+                          </form>
                         </a>
                       </footer>
                   </div>
                 </div>
+              <% } %>
             </div>
       </section>
   </div>
   </body>
-  <script>
-    var app = new Vue({
-      el: '#app',
-      data: {
-        blogs: JSON.parse(`<%- blogs %>`)
-      },
-      computed: {
-        blogDisplay(){
-          return this.blogs.map((blog) => {
-            if(blog.content.length > 200){
-              blog.content = blog.content.substring(0, 200)
-            }
-            return blog
-          })
-        }
-      }
-    })
-  </script>
 </html>

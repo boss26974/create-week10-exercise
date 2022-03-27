@@ -1,6 +1,5 @@
 const express = require("express")
 const path = require("path")
-const bodyParser = require("body-parser")
 
 const app = express();
 
@@ -12,18 +11,16 @@ app.set('views', path.join(__dirname, 'views'))
 // Statics
 app.use(express.static(path.join(__dirname, 'static')))
 
-app.use(bodyParser.urlencoded({ extended: false }))
-
 app.use(express.json()) // for parsing application/json
 app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
 
 // routers
 const indexRouter = require('./routes/index')
 const blogRouter = require('./routes/blog')
-const commentRouter = require('./routes/comment3')
+const commentRouter = require('./routes/comment')
 
 app.use(indexRouter.router)
-app.use(blogRouter)
+app.use(blogRouter.router)
 app.use(commentRouter.router)
 
 app.listen(3000, () => {

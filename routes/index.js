@@ -5,9 +5,9 @@ router = express.Router();
 
 router.get("/", async function (req, res, next) {
   try {
+
     let query = `SELECT a.*, b.file_path FROM blogs AS a LEFT JOIN 
-    (SELECT * FROM images WHERE main=1) AS b ON a.id = b.blog_id
-    AND b.main = 1`
+    (SELECT * FROM images WHERE main=1) AS b ON a.id = b.blog_id`
     let params = []
     if (req.query.search){
       query = query + ` WHERE a.title LIKE ?`
@@ -15,8 +15,8 @@ router.get("/", async function (req, res, next) {
     }
     const [rows, fields] = await pool.query(query, params);
     return res.render("index", { 
-      search: req.query.search || '',
-      blogs: JSON.stringify(rows)
+      search: req.query.search || '', 
+      blogs: rows 
     });
   } catch (err) {
     return next(err)

@@ -7,96 +7,96 @@
     <link href="/css/all.css" rel="stylesheet" />
     <link href="/css/bulma.css" rel="stylesheet" />
     <script src="/js/all.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     <title>My Blogs</title>
   </head>
-  <section id="app">
   <body>
     <div class="container is-widescreen">
+    <% if (error) { %>
         <section class="section">
         <div class="container is-widescreen">
             <div class="notification is-danger">
+              <%= error.code + ': ' + error.sqlMessage %>
             </div>
           </div>
         </section>
+    <% } else { %>  
     <section class="hero">
       <div class="hero-body">
-        <p class="title">{{blog.title}}</p>
+        <p class="title"><%= blog.title %></p>
       </div>
     </section>
-    <section class="section">
+    <section class="section" id="app">
         <div class="content">
             <div class="card has-background-light">
                 <div class="card-image pt-5">
                     <div class="columns">
-                        <div class="column" v-for="image in images">
+                        <div class="column">
                             <figure class="image">
-                                <img :src="image.file_path" alt="Placeholder image">
+                                <img src="https://bulma.io/images/placeholders/480x480.png" alt="Placeholder image">
+                            </figure>
+                        </div>
+                        <div class="column">
+                            <figure class="image">
+                                <img src="https://bulma.io/images/placeholders/480x480.png" alt="Placeholder image">
+                            </figure>
+                        </div>
+                        <div class="column">
+                            <figure class="image">
+                                <img src="https://bulma.io/images/placeholders/480x480.png" alt="Placeholder image">
+                            </figure>
+                        </div>
+                        <div class="column">
+                            <figure class="image">
+                                <img src="https://bulma.io/images/placeholders/480x480.png" alt="Placeholder image">
                             </figure>
                         </div>
                     </div>
-                    <div class="columns">
-                        <p>{{blog.content}}</p>
-                    </div>
+                    
                 </div>
                 <div class="card-content">
                     <div class="content">
+                        <%= blog.content %>
                     </div>
                     <div class="container">
-                        <p class="subtitle">Comments ({{comments.length}})</p>
-                                <div class="box" v-for="comment in comments" :key="'comment_' + comment.id">
+                        <p class="subtitle">Comments</p>
+                            <% for (comment of comments) { %>
+                                <div class="box">
                                     <article class="media">
                                     <div class="media-left">
-                                        <figure class="image is-128x128">
-                                        <img v-if="comment.img_address != null" :src="comment.img_address" alt="image_id">
-                                        <img v-else src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
+                                        <figure class="image is-64x64">
+                                        <img src="https://bulma.io/images/placeholders/128x128.png" alt="Image">
                                         </figure>
                                     </div>
                                     <div class="media-content">
                                         <div class="content">
                                         <p>
-                                            {{comment.comment}}
+                                            <%= comment.comment %>
                                         </p>
-                                        <p class="is-size-7">{{comment.comment_date}}</p>
+                                        <p class="is-size-7"><%= comment.comment_date %></p>
                                         </div>
                                         <nav class="level is-mobile">
                                         <div class="level-left">
-                                            <form method="post" :action="'/comments/addlike/' + comment.id" 
-                                            :id="'likeComment' + comment.id">
-                                                <a class="level-item" aria-label="like" 
-                                                @click="addlike(comment.id)">
-                                                <span class="icon is-small">
-                                                    <i class="fas fa-heart" aria-hidden="true"></i>
-                                                    ({{comment.like}})
-                                                </span>
-                                                </a>
-                                            </form>
-                                        </div>
-                                        <div class="level-right">
-                                            <form method="post" :action="'/comments/' + comment.id"
-                                            :id="'deleteComment' + comment.id">
-                                                <a class="level-item" aria-label="like" 
-                                                @click="deleteComment(comment.id)">
-                                                <span class="icon is-small">
-                                                    <i class="fas fa-trash" aria-hidden="true"></i>
-                                                </span>
-                                                </a>
-                                            </form>
+                                            <a class="level-item" aria-label="like">
+                                            <span class="icon is-small">
+                                                <i class="fas fa-heart" aria-hidden="true"></i>
+                                            </span>
+                                            </a>
                                         </div>
                                         </nav>
                                     </div>
                                     </article>
                                 </div>
-                                <form :action="'/' + blog.id + '/comments'" method="post" enctype="multipart/form-data">
-                                    <div class="field">
-                                        <label class="label">Add Comment</label>
-                                        <div class="control">
-                                          <textarea class="textarea" name="comment" placeholder="Add Comment Here"></textarea>
-                                        </div>
-                                      </div>
-                                      <input name="myImage" type="file">
-                                    <input class="button is-primary" type="submit" value="Submit">
-                                </form>
+                            <% } %>
+                            <form>
+                                <div class="field">
+                                    <label class="label">Add Comment</label>
+                                    <div class="control">
+                                      <textarea class="textarea" name="comment" placeholder="Add Comment Here"></textarea>
+                                    </div>
+                                  </div>
+                                  <input name="myImage" type="file">
+                                <input class="button is-primary" type="submit" value="Submit">
+                            </form>
                     </div>
                 </div>
                 <footer class="card-footer">
@@ -105,34 +105,7 @@
             </div>
         </div>
     </section>
+    <% } %>
     </div>
   </body>
-</section>
-<script>
-    var app = new Vue({
-        el: "#app",
-        data: {
-            blog: JSON.parse(`<%- blog %>`),
-            images: JSON.parse(`<%- Image %>`),
-            comments: JSON.parse(`<%- comments %>`)
-        },
-        methods: {
-            addlike(id){
-                this.comments = this.comments.map((x) => {
-                    if(x.id == id){
-                        x.like++
-                    }
-                    return x
-                })
-                document.getElementById("likeComment" + id).submit()
-            },
-            deleteComment(id){
-                this.comments = this.comments.filter((comment) => {
-                    return comment.id != id
-                })
-                document.getElementById("deleteComment" + id).submit()
-            }
-        }
-    })
-</script>
 </html>
